@@ -1,17 +1,60 @@
-# .htaccess para diagnóstico UOL Host
-DirectoryIndex diagnostico-uolhost.php index.php
-
-# Aumentar limites
-php_value max_execution_time 60
-php_value memory_limit 256M
-
-# Habilitar logs de erro
-php_flag log_errors On
-php_value error_log "php_errors.log"
-
-# Permissões básicas
-Options +FollowSymLinks
+# .htaccess OTIMIZADO para UOL Host Windows
+DirectoryIndex index.php
 Options -Indexes
 
-# Sem reescrita por enquanto
-RewriteEngine Off
+# Proteger arquivos sensíveis
+<Files "*.db">
+    Deny from all
+</Files>
+<Files "*.json">
+    Deny from all
+</Files>
+<Files ".env">
+    Deny from all
+</Files>
+<Files "*.log">
+    Deny from all
+</Files>
+
+# Permitir acesso aos arquivos essenciais
+<Files "index.php">
+    Allow from all
+</Files>
+<Files "diagnostico-uolhost.php">
+    Allow from all
+</Files>
+<Files "teste.php">
+    Allow from all
+</Files>
+<Files "webhook.php">
+    Allow from all
+</Files>
+
+# Configurações PHP compatíveis com UOL Host
+<IfModule mod_php5.c>
+    php_value max_execution_time 60
+    php_value memory_limit 256M
+    php_flag display_errors Off
+    php_flag log_errors On
+</IfModule>
+
+# Reescrita de URL simplificada
+RewriteEngine On
+
+# Webhook específico
+RewriteRule ^webhook/?$ webhook.php [L,QSA]
+
+# Uploads
+RewriteRule ^uploads/(.+)$ static/uploads/$1 [L]
+
+# Site principal
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/(static|uploads|diagnostico-uolhost\.php|teste\.php|webhook\.php)
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Headers de segurança
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options nosniff
+    Header always set X-Frame-Options SAMEORIGIN
+</IfModule>
