@@ -1,8 +1,17 @@
-# .htaccess ULTRA-SIMPLES
-DirectoryIndex index.php
+# .htaccess para diagnóstico UOL Host
+DirectoryIndex diagnostico-uolhost.php index.php
 
-# Básico de segurança
+# Aumentar limites
+php_value max_execution_time 60
+php_value memory_limit 256M
+
+# Habilitar logs de erro
+php_flag log_errors On
+php_value error_log "php_errors.log"
+
+# Permissões básicas
+Options +FollowSymLinks
 Options -Indexes
 
-# SEM reescrita por enquanto
-# RewriteEngine Off
+# Sem reescrita por enquanto
+RewriteEngine Off
