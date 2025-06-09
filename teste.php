@@ -1,34 +1,31 @@
 <?php
-// teste.php
-header('Content-Type: text/plain');
+// index_simples.php - Teste básico UOL Host
+session_start();
 
-echo "=== TESTE UOL HOST WINDOWS ===\n";
-echo "PHP Version: " . phpversion() . "\n";
-echo "Server: " . ($_SERVER['SERVER_SOFTWARE'] ?? 'Unknown') . "\n";
-echo "Timestamp: " . date('Y-m-d H:i:s') . "\n";
-echo "Document Root: " . $_SERVER['DOCUMENT_ROOT'] . "\n";
-echo "Script Path: " . __FILE__ . "\n";
+echo "<!DOCTYPE html>";
+echo "<html><head><title>TecPoint - Teste</title></head><body>";
+echo "<h1>Site TecPoint Funcionando!</h1>";
+echo "<p>PHP Version: " . phpversion() . "</p>";
+echo "<p>Servidor: " . ($_SERVER['SERVER_SOFTWARE'] ?? 'Unknown') . "</p>";
+echo "<p>Data/Hora: " . date('d/m/Y H:i:s') . "</p>";
 
-// Teste de escrita
-if(is_writable('.')) {
-    echo "Permissao de escrita: ✅ OK\n";
-    
-    // Teste de criação de arquivo
-    if(file_put_contents('test_write.txt', 'teste')) {
-        echo "Criacao de arquivo: ✅ OK\n";
-        unlink('test_write.txt'); // Remove arquivo de teste
-    } else {
-        echo "Criacao de arquivo: ❌ ERRO\n";
-    }
+// Teste de permissões
+$upload_dir = __DIR__ . '/static/uploads';
+echo "<h2>Teste de Permissões:</h2>";
+echo "<p>Pasta uploads existe: " . (is_dir($upload_dir) ? 'SIM' : 'NÃO') . "</p>";
+echo "<p>Pasta uploads gravável: " . (is_writable($upload_dir) ? 'SIM' : 'NÃO') . "</p>";
+
+// Teste de criação de arquivo
+$test_file = $upload_dir . '/test.txt';
+if (file_put_contents($test_file, 'teste')) {
+    echo "<p>✅ Criação de arquivo: SUCESSO</p>";
+    unlink($test_file);
 } else {
-    echo "Permissao de escrita: ❌ ERRO\n";
+    echo "<p>❌ Criação de arquivo: FALHOU</p>";
 }
 
-// Teste de funções necessárias
-echo "Funcao file_get_contents: " . (function_exists('file_get_contents') ? '✅' : '❌') . "\n";
-echo "Funcao json_decode: " . (function_exists('json_decode') ? '✅' : '❌') . "\n";
-echo "Funcao exec: " . (function_exists('exec') ? '✅' : '❌') . "\n";
-echo "Funcao shell_exec: " . (function_exists('shell_exec') ? '✅' : '❌') . "\n";
-
-echo "\n=== TESTE CONCLUÍDO ===\n";
+echo "<hr>";
+echo "<p><a href='/diagnostico-uolhost.php'>Ver Diagnóstico Completo</a></p>";
+echo "<p><a href='/teste.php'>Ver Teste PHP</a></p>";
+echo "</body></html>";
 ?>
