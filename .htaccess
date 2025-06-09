@@ -1,59 +1,21 @@
+# .htaccess MÍNIMO para UOL Host Windows
 DirectoryIndex index.php
 Options -Indexes
 
-# Proteger arquivos sensíveis
-<Files "*.db">
-    Deny from all
-</Files>
-<Files "*.json">
-    Deny from all
-</Files>
-<Files ".env">
-    Deny from all
-</Files>
-<Files "*.log">
+# Proteger arquivos sensíveis (versão compatível)
+<Files ~ "\.(db|json|env|log)$">
+    Order allow,deny
     Deny from all
 </Files>
 
-# Proteger webhook de acesso direto indevido
-<Files "webhook.php">
-    <RequireAll>
-        Require all granted
-        # Permitir apenas GitHub IPs (opcional)
-    </RequireAll>
-</Files>
-
-# Reescrita de URL - OTIMIZADA para webhook
+# Reescrita básica - SEM conflitos
 RewriteEngine On
 
-# Regra específica para webhook (prioridade alta)
-RewriteRule ^webhook/?$ webhook.php [L,QSA]
-RewriteRule ^deploy/?$ webhook.php [L,QSA]
+# Webhook direto (sem reescrita)
+# Use URL direta: /webhook.php
 
-# Regras originais para o site
+# Site principal
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_URI} !^/webhook
-RewriteCond %{REQUEST_URI} !^/deploy  
+RewriteCond %{REQUEST_URI} !\.php$
 RewriteRule ^(.*)$ index.php [QSA,L]
-
-# Headers de segurança para webhook
-<IfModule mod_headers.c>
-    # Para arquivos PHP (incluindo webhook)
-    <FilesMatch "\.(php)$">
-        Header always set X-Content-Type-Options nosniff
-        Header always set X-Frame-Options DENY
-        Header always set X-XSS-Protection "1; mode=block"
-    </FilesMatch>
-</IfModule>
-
-# Configurações específicas UOL Host Windows
-<IfModule mod_mime.c>
-    AddType application/x-httpd-php .php
-</IfModule>
-
-# Timeout otimizado para webhook
-<IfModule mod_fcgid.c>
-    FcgidIOTimeout 40
-    FcgidConnectTimeout 20
-</IfModule>
