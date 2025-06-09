@@ -1,0 +1,24 @@
+DirectoryIndex index.php
+Options -Indexes
+
+# Proteger arquivos sensíveis
+<Files "*.db">
+    Deny from all
+</Files>
+
+<Files "*.json">
+    Deny from all
+</Files>
+
+<Files ".env">
+    Deny from all
+</Files>
+
+# Reescrita de URL
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Configurações de upload
+# NÃO usar php_flag ou php_value aqui (causa erro 500 na UOL Host)
