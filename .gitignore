@@ -1,0 +1,6 @@
+*.db
+*.log
+file_metadata.json
+static/uploads/*
+!static/uploads/.gitkeep
+failed_emails.json
