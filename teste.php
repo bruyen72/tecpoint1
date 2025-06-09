@@ -1,31 +1,15 @@
 <?php
-// index_simples.php - Teste básico UOL Host
-session_start();
-
-echo "<!DOCTYPE html>";
-echo "<html><head><title>TecPoint - Teste</title></head><body>";
-echo "<h1>Site TecPoint Funcionando!</h1>";
-echo "<p>PHP Version: " . phpversion() . "</p>";
+// index_test.php - TESTE FORÇADO UOL HOST
+echo "<!DOCTYPE html><html><head><title>TecPoint TESTE</title></head><body>";
+echo "<h1>🎯 SITE TECPOINT FUNCIONANDO!</h1>";
+echo "<p>PHP: " . phpversion() . "</p>";
 echo "<p>Servidor: " . ($_SERVER['SERVER_SOFTWARE'] ?? 'Unknown') . "</p>";
-echo "<p>Data/Hora: " . date('d/m/Y H:i:s') . "</p>";
-
-// Teste de permissões
-$upload_dir = __DIR__ . '/static/uploads';
-echo "<h2>Teste de Permissões:</h2>";
-echo "<p>Pasta uploads existe: " . (is_dir($upload_dir) ? 'SIM' : 'NÃO') . "</p>";
-echo "<p>Pasta uploads gravável: " . (is_writable($upload_dir) ? 'SIM' : 'NÃO') . "</p>";
-
-// Teste de criação de arquivo
-$test_file = $upload_dir . '/test.txt';
-if (file_put_contents($test_file, 'teste')) {
-    echo "<p>✅ Criação de arquivo: SUCESSO</p>";
-    unlink($test_file);
-} else {
-    echo "<p>❌ Criação de arquivo: FALHOU</p>";
-}
-
+echo "<p>Data: " . date('d/m/Y H:i:s') . "</p>";
+echo "<p>Arquivo: " . __FILE__ . "</p>";
+echo "<p>URL: " . $_SERVER['REQUEST_URI'] . "</p>";
 echo "<hr>";
-echo "<p><a href='/diagnostico-uolhost.php'>Ver Diagnóstico Completo</a></p>";
-echo "<p><a href='/teste.php'>Ver Teste PHP</a></p>";
+echo "<h2>TESTES:</h2>";
+echo "<p><a href='/teste.php'>Teste PHP</a></p>";
+echo "<p><a href='/diagnostico-uolhost.php'>Diagnóstico</a></p>";
 echo "</body></html>";
 ?>
