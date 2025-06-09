@@ -1,57 +1,69 @@
-# .htaccess OTIMIZADO para UOL Host Windows
-DirectoryIndex index.php
-Options -Indexes
+# .htaccess FORÇADO para UOL Host Windows IIS
+DirectoryIndex index.php index.html
 
-# Proteger arquivos sensíveis
-<Files "*.db">
-    Deny from all
-</Files>
+# FORÇA o index.php como página principal
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Força página inicial para index.php
+    RewriteRule ^$ index.php [L]
+    RewriteRule ^index$ index.php [L]
+    RewriteRule ^index/$ index.php [L]
+    
+    # Permite arquivos estáticos
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule \.(css|js|png|jpg|jpeg|gif|ico|pdf|txt|woff|woff2|ttf|svg)$ - [L]
+    
+    # Permite pastas existentes
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    
+    # Redireciona tudo mais para index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
+
+# CONFIGURAÇÕES ESPECÍFICAS UOL HOST
+<IfModule mod_php8.c>
+    php_value auto_prepend_file ""
+    php_value auto_append_file ""
+    php_flag display_errors Off
+    php_flag log_errors On
+</IfModule>
+
+# FORÇA TIPOS MIME
+<IfModule mod_mime.c>
+    AddType application/x-httpd-php .php
+    AddType text/html .php
+</IfModule>
+
+# Protege arquivos sensíveis
 <Files "*.json">
-    Deny from all
-</Files>
-<Files ".env">
     Deny from all
 </Files>
 <Files "*.log">
     Deny from all
 </Files>
+<Files "*.db">
+    Deny from all
+</Files>
 
-# Permitir acesso aos arquivos essenciais
+# Permite acesso específico aos arquivos principais
 <Files "index.php">
     Allow from all
+    Require all granted
 </Files>
-<Files "diagnostico-uolhost.php">
-    Allow from all
-</Files>
+
 <Files "teste.php">
     Allow from all
+    Require all granted
 </Files>
-<Files "webhook.php">
+
+<Files "diagnostico-uolhost.php">
     Allow from all
+    Require all granted
 </Files>
-
-# Configurações PHP compatíveis com UOL Host
-<IfModule mod_php5.c>
-    php_value max_execution_time 60
-    php_value memory_limit 256M
-    php_flag display_errors Off
-    php_flag log_errors On
-</IfModule>
-
-# Reescrita de URL simplificada
-RewriteEngine On
-
-# Webhook específico
-RewriteRule ^webhook/?$ webhook.php [L,QSA]
-
-# Uploads
-RewriteRule ^uploads/(.+)$ static/uploads/$1 [L]
-
-# Site principal
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_URI} !^/(static|uploads|diagnostico-uolhost\.php|teste\.php|webhook\.php)
-RewriteRule ^(.*)$ index.php [QSA,L]
 
 # Headers de segurança
 <IfModule mod_headers.c>
