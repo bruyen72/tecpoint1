@@ -5,20 +5,55 @@ Options -Indexes
 <Files "*.db">
     Deny from all
 </Files>
-
 <Files "*.json">
     Deny from all
 </Files>
-
 <Files ".env">
     Deny from all
 </Files>
+<Files "*.log">
+    Deny from all
+</Files>
 
-# Reescrita de URL
+# Proteger webhook de acesso direto indevido
+<Files "webhook.php">
+    <RequireAll>
+        Require all granted
+        # Permitir apenas GitHub IPs (opcional)
+    </RequireAll>
+</Files>
+
+# Reescrita de URL - OTIMIZADA para webhook
 RewriteEngine On
+
+# Regra específica para webhook (prioridade alta)
+RewriteRule ^webhook/?$ webhook.php [L,QSA]
+RewriteRule ^deploy/?$ webhook.php [L,QSA]
+
+# Regras originais para o site
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/webhook
+RewriteCond %{REQUEST_URI} !^/deploy  
 RewriteRule ^(.*)$ index.php [QSA,L]
 
-# Configurações de upload
-# NÃO usar php_flag ou php_value aqui (causa erro 500 na UOL Host)
+# Headers de segurança para webhook
+<IfModule mod_headers.c>
+    # Para arquivos PHP (incluindo webhook)
+    <FilesMatch "\.(php)$">
+        Header always set X-Content-Type-Options nosniff
+        Header always set X-Frame-Options DENY
+        Header always set X-XSS-Protection "1; mode=block"
+    </FilesMatch>
+</IfModule>
+
+# Configurações específicas UOL Host Windows
+<IfModule mod_mime.c>
+    AddType application/x-httpd-php .php
+</IfModule>
+
+# Timeout otimizado para webhook
+<IfModule mod_fcgid.c>
+    FcgidIOTimeout 40
+    FcgidConnectTimeout 20
+</IfModule>
