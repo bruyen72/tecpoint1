@@ -1,21 +1,8 @@
-# .htaccess MÍNIMO para UOL Host Windows
+# .htaccess ULTRA-SIMPLES
 DirectoryIndex index.php
+
+# Básico de segurança
 Options -Indexes
 
-# Proteger arquivos sensíveis (versão compatível)
-<Files ~ "\.(db|json|env|log)$">
-    Order allow,deny
-    Deny from all
-</Files>
-
-# Reescrita básica - SEM conflitos
-RewriteEngine On
-
-# Webhook direto (sem reescrita)
-# Use URL direta: /webhook.php
-
-# Site principal
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_URI} !\.php$
-RewriteRule ^(.*)$ index.php [QSA,L]
+# SEM reescrita por enquanto
+# RewriteEngine Off
